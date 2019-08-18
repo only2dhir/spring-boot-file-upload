@@ -38,7 +38,7 @@ public class FileController {
     private static final String zipFileName = "devglanZippedFile.zip";
 
     @PostMapping("/upload")
-    public ResponseEntity upload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity uploadToLocalFileSystem(@RequestParam("file") MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Path path = Paths.get(fileBasePath + fileName);
         try {
@@ -54,7 +54,7 @@ public class FileController {
     }
 
     @GetMapping("/download/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+    public ResponseEntity<Resource> downloadFileFromLocal(@PathVariable String fileName) {
         Path path = Paths.get(fileBasePath + fileName);
         Resource resource = null;
         try {
@@ -73,7 +73,7 @@ public class FileController {
         List<Object> fileDownloadUrls = new ArrayList<>();
         Arrays.asList(files)
                 .stream()
-                .forEach(file -> fileDownloadUrls.add(upload(file).getBody()));
+                .forEach(file -> fileDownloadUrls.add(uploadToLocalFileSystem(file).getBody()));
         return ResponseEntity.ok(fileDownloadUrls);
     }
 
@@ -95,7 +95,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity uploadWithParams(@RequestParam("file") MultipartFile file, @RequestParam String extraParam) {
+    public ResponseEntity uploadWithExtraParams(@RequestParam("file") MultipartFile file, @RequestParam String extraParam) {
         logger.info("Extra param " + extraParam);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Path path = Paths.get(fileBasePath + fileName);
@@ -109,6 +109,18 @@ public class FileController {
                 .path(fileName)
                 .toUriString();
         return ResponseEntity.ok(fileDownloadUri);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity uploadToDB(@RequestParam("file") MultipartFile file) {
+        //TODO
+        return null;
+    }
+
+    @GetMapping("/download/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFromDB(@PathVariable String fileName) {
+        //TODO
+        return null;
     }
 
 }
